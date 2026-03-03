@@ -1,28 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Form</title>
-    <link rel="stylesheet" href="./css/styles.css" />
-  </head>
-  <body>
-    <load
-      src="./partials/header.html"
-      icon-path="./img/sprite.svg#logo"
-      highlight-curr="active"
-    />
 
-    <main>
-      <div class="container">
-        <h1 class="main-title">
-          <span class="main-title-gradient">Welcome</span> to form
-        </h1>
-        <load src="./partials/back-link.html" />
-      </div>
-    </main>
+const formState = 'feedback-form-state';
+const form = document.querySelector('.feedback-form');
 
-    <load src="./partials/footer.html" />
-  </body>
-</html>
+// get local storage data
+const localState = JSON.parse(localStorage.getItem(formState));
+
+if (localState) {
+  // fill form fields from local storage
+  for (const key of Object.keys(localState)) {
+    document.querySelector(`[name="${key}"]`).value = localState[key];
+  }
+}
+
+// event to fill in form state object **//
+form.addEventListener('input', onInputSaveToLocalStorage);
+
+// save form form data to local storage **//
+form.addEventListener('submit', onSubmitForm);
+
+function onInputSaveToLocalStorage(event) {
+  const key = event.target.name;
+  const updatedStorage = {
+    ...JSON.parse(localStorage.getItem(formState)),
+    [key]: event.target.value.trim(),
+  };
+
+  localStorage.setItem(formState, JSON.stringify(updatedStorage));
+}
+
+function onSubmitForm(event) {
+  event.preventDefault();
+
+  const formData = new FormData(event.target);
+  const formDataObj = Object.fromEntries(formData.entries());
+  if (validateFormFields(formDataObj)) {
+    // according requirement of Homework 9
+    console.log('submit', formDataObj);
+
+    localStorage.removeItem(formState);
+
+    event.target.reset();
+  }
+}
+
+function validateFormFields(formDataObj) {
+  let isValid = true;
+  for (const key in formDataObj) {
+    if (!formDataObj[key]) {
+      addBorderInputError(document.querySelector(`[name="${key}"]`));
+      isValid = false;
+    }
+    if (formDataObj[key]) {
+      removeBorderInputError(document.querySelector(`[name="${key}"]`));
+    }
+  }
+
+  return isValid;
+}
+
+function addBorderInputError(input) {
+  input.classList.add('error');
+}
+
+function removeBorderInputError(input) {
+  input.classList.remove('error');
+}
