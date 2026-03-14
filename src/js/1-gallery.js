@@ -69,8 +69,8 @@ const images = [
 
 const gallery = document.querySelector('.gallery');
 
-const markup = data.map(({ preview, original, description }) => {
-  return `<li class="gallery-item hvr-grow">
+const markup = images.map(({ preview, original, description }) => {
+  return `<li class="gallery-item">
   <a class="gallery-link " href="${original}">
     <img
       class="gallery-image"
