@@ -10,9 +10,16 @@ if (savedData) {
 }
 
 form.addEventListener('input', event => {
-  formData[event.target.name] = event.target.value.trim();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+  formData[event.target.name] = event.target.value;
+
+  const dataToSave = {
+    ...formData,
+    [event.target.name]: event.target.value.trim(),
+  };
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
 });
+
 
 form.addEventListener('submit', event => {
   event.preventDefault();
